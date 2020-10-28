@@ -16,12 +16,6 @@ with smart_run(session):
     session.set_do_follow(enabled=True, percentage=100)
     session.set_do_like(enabled=True, percentage=100)
     # activity
-    session.like_by_tags(
-        ['photography', 'blackandwhitephotography', 'naturephotography', 'photographylovers', 'Instaphoto', 'photogram',
-         'photographyislife', 'justgoshoot', 'picoftheday', 'photooftheday', 'love', 'nature',
-         'sunset', 'sunrise', 'landscape', 'flowers', 'mountains', 'sky', 'lake', 'river', 'ocean',
-         'instalike', 'love', 'instagood', 'fashion', 'beautiful', 'friends', 'summer', 'selfie', 'foodk ',
-         'family', 'igers', 'tbt', 'happy'], amount=1000)
     photo_comments = ['Nice shot! @{}',
                       'I love your profile! @{}',
                       'Your feed is an inspiration :thumbsup:',
@@ -35,4 +29,10 @@ with smart_run(session):
     session.set_comments(photo_comments, media='Photo')
     session.set_do_comment(enabled=True, percentage=100)
     session.unfollow_users(amount=75, nonFollowers=True, style="RANDOM", unfollow_after=42 * 60 * 60, sleep_delay=3)
+    session.like_by_tags(
+        ['photography', 'blackandwhitephotography', 'naturephotography', 'photographylovers', 'Instaphoto', 'photogram',
+         'photographyislife', 'justgoshoot', 'picoftheday', 'photooftheday', 'love', 'nature',
+         'sunset', 'sunrise', 'landscape', 'flowers', 'mountains', 'sky', 'lake', 'river', 'ocean',
+         'instalike', 'love', 'instagood', 'fashion', 'beautiful', 'friends', 'summer', 'selfie', 'foodk ',
+         'family', 'igers', 'tbt', 'happy'], amount=1000)
     session.join_pods(topic='general')
