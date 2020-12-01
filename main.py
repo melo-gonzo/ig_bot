@@ -163,7 +163,7 @@ for celeb in popular:
                 with open('following.txt', 'a') as f:
                     f.write(user + '\n')
                 f = open('following.txt', 'r').read().split('\n')[:-1]
-                print('\n following: ' + len(f) + '\n')
+                print('\n following: ' + str(len(f)) + '\n')
                 if len(f) > 150:
                     unfollow = f[:2]
                     for un in unfollow:
