@@ -2,7 +2,7 @@ from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.common.by import By
-from login_carmelo import username, password, account
+from login import username, password, account
 from selenium import webdriver
 from time import sleep
 import numpy as np
@@ -46,9 +46,11 @@ class InstagramBot():
         self.browser.get('https://www.instagram.com/' + username + '/')
         time.sleep(2)
         followButton = self.browser.find_element_by_class_name('_5f5mN.-fzfL._6VtSN.yZn4P')
+        print('\n' + 'click unfollow button' + '\n')
         followButton.click()
         time.sleep(2)
         confirmButton = self.browser.find_element_by_xpath('//button[text() = "Unfollow"]')
+        print('\n' + 'click unfollow confirm button' + '\n')
         confirmButton.click()
 
     def getUserFollowers(self, username, max_followers):
@@ -93,14 +95,15 @@ class InstagramBot():
             waitbar(waited_time, sleep_for)
 
     def search_bar(self, search_value):
+        print(5 * '\n' + search_value + 5 * '\n')
         searchbox = WebDriverWait(self.browser, 10).until(
             EC.visibility_of_element_located((By.XPATH, "//input[@placeholder='Search']")))
         searchbox.send_keys(search_value)
         time.sleep(10)
         searchbox.send_keys(Keys.ENTER)
-        time.sleep(2)
+        time.sleep(5)
         searchbox.send_keys(Keys.ENTER)
-        time.sleep(4)
+        time.sleep(7)
 
     def add_to_following(self, user):
         with open(account + '_following.txt', 'a') as f:
@@ -115,7 +118,7 @@ class InstagramBot():
             for un in unfollow:
                 try:
                     bot.unfollowWithUsername(un)
-                    self.do_sleep(60, 120)
+                    self.do_sleep(sleep_low, sleep_high)
                 except Exception:
                     print(traceback.format_exc())
                     pass
@@ -128,61 +131,70 @@ class InstagramBot():
         # first_sq = self.browser.find_element_by_xpath('//*[@id="react-root"]/section/main/article/div[1]/div/div/div[1]/div[1]/a')
         first_sq = self.browser.find_element_by_xpath(
             '//*[@id="react-root"]/section/main/article/div[2]/div/div[1]/div[1]/a')
-        self.do_sleep(60, 120)
+        self.do_sleep(sleep_low, sleep_high)
         first_sq.click()
-        self.do_sleep(60, 120)
         done = 0
         for k in range(num_to_follow):
             try:
-                self.do_sleep(60, 120)
+                self.do_sleep(sleep_low, sleep_high)
                 username = self.browser.find_element_by_xpath(
                     '/html/body/div[5]/div[2]/div/article/header/div[2]/div[1]/div[1]/span/a').text
-                follow_button = self.browser.find_element_by_xpath("//button[contains(.,'Follow')]")
+                # follow_button = self.browser.find_element_by_xpath("//button[contains(.,'Follow')]")
+                fb_xp = '/html/body/div[5]/div[2]/div/article/header/div[2]/div[1]/div[2]/button'
+                follow_button = self.browser.find_element_by_xpath(fb_xp)
+                print('\n' + 'click follow button' + '\n')
                 follow_button.click()
-                self.do_sleep(60, 120)
+                self.do_sleep(sleep_low, sleep_high)
                 self.add_to_following(username)
+                print('\n' + 'click like button' + '\n')
                 self.browser.find_element_by_xpath("//span[@class='fr66n']").click()
+                print('\n' + 'click next button' + '\n')
+                time.sleep(5)
                 self.browser.find_element_by_link_text('Next').click()
-                self.do_sleep(60, 120)
+                self.do_sleep(sleep_low, sleep_high)
                 done += 1
             except Exception:
                 try:
                     cancel_button = self.browser.find_element_by_xpath("//button[contains(.,'Cancel')]")
-                    self.do_sleep(60, 120)
+                    self.do_sleep(sleep_low, sleep_high)
+                    print('\n' + 'click cancel button' + '\n')
                     cancel_button.click()
-                    self.do_sleep(60, 120)
+                    self.do_sleep(sleep_low, sleep_high)
+                    print('\n' + 'click next button' + '\n')
                     self.browser.find_element_by_link_text('Next').click()
-                    self.do_sleep(60, 120)
+                    self.do_sleep(sleep_low, sleep_high)
                 except Exception:
                     print(traceback.format_exc())
                     pass
                 print(traceback.format_exc())
                 pass
-        if done == num_to_follow: self.remove_followers(int(num_to_follow * 2))
+        self.remove_followers(int(num_to_follow * 2))
 
-    def getUserFollowing(self, username, max_following):
+    def getUserFollowing(self, username, max_following=1000):
         self.browser.get('https://www.instagram.com/' + username)
         wait = WebDriverWait(self.browser, 10)
         followingList = wait.until(EC.element_to_be_clickable((By.XPATH, "//a[contains(@href,'/following')]")))
         followingList.click()
         time.sleep(2)
-        followingList = self.browser.find_element_by_css_selector('div[role=\'dialog\'] ul')
-        numberOfFollowingInList = len(followingList.find_elements_by_css_selector('li'))
-        actionChain = webdriver.ActionChains(self.browser)
+        fBody = self.browser.find_element_by_xpath("//div[@class='isgrP']")
+        self.browser.execute_script("arguments[0].scrollTop = arguments[0].scrollHeight", fBody)
+        num_followers = 0
         tries = 0
-        while (numberOfFollowingInList < max_following):
-            # tries += 1
-            # followingList.click()
+        while tries < 10:
             time.sleep(0.5)
             followingList = self.browser.find_element_by_css_selector('div[role=\'dialog\'] ul')
             time.sleep(0.5)
-            actionChain.key_down(Keys.SPACE).perform()
-            time.sleep(0.5)
-            actionChain.key_up(Keys.SPACE).perform()
             time.sleep(0.5)
             numberOfFollowingInList = len(followingList.find_elements_by_css_selector('li'))
             print(numberOfFollowingInList)
-            # if tries > 10: break
+            self.browser.execute_script("arguments[0].scrollTop = arguments[0].scrollHeight", fBody)
+            if numberOfFollowingInList > num_followers:
+                num_followers = numberOfFollowingInList
+                tries = 0
+            else:
+                num_followers = numberOfFollowingInList
+                tries += 1
+            print(tries)
         following = []
         for user in followingList.find_elements_by_css_selector('li'):
             userLink = user.find_element_by_css_selector('a').get_attribute('href')
@@ -190,7 +202,13 @@ class InstagramBot():
             following.append(userLink)
             if (len(following) == max):
                 break
-        return following
+
+        f = open(username + '_following.txt','w')
+        followers_list = [person.split('/')[-2] for person in following]
+        for person in followers_list:
+            f.write(person+'\n')
+        f.close()
+        return
 
     def closeBrowser(self):
         self.browser.close()
@@ -207,90 +225,31 @@ def waitbar(current, total):
     print(done * '-' + '>' + togo * '.' + per + '%', end='\r')
 
 
+sleep_low = 5
+sleep_high = 10
 bot = InstagramBot(username, password)
 bot.signIn()
 time.sleep(5)
-locations = ['santa barbara, california',
-             'goleta, california',
-             'mission, santa barbara',
-             'mesa lane, santa barbara',
-             'butterfly beach, santa barbara',
-             'east beach, santa barbara',
-             'isla vista, california',
-             'state street, santa barbara',
-             'ucsb, santa barbara',
-             'hendry\s beach, santa barbara',
-             'inspiration point, santa barbara',
-             'lizards mouth, santa barbara',
-             'montecito, california',
-             'thousand steps beach, santa barbara',
-             'campus point, santa barbara',
-             'stearns warf, santa barbara',
-             '34 anacapa street, santa barbara',
-             'courthouse, santa barbara',
-             'mesa, santa barbara',
-             'shoreline park, santa barbara',
-             'chase palm park, santa barbara',
-             'arroyo burro beach, santa barbara']
-
+bot.getUserFollowing(username, max_following=1000)
+bot.remove_followers(10)
+locations = open('locations.txt','r').read().split('\n')[:-1]
 idx = random.sample(range(len(locations)), len(locations))
 locs = [locations[ii] for ii in idx]
-for loc in locs:
-    bot.search_bar(loc)
-    time.sleep(10)
-    bot.follow_from_tilepage(9)
+while True:
+    try:
+        for loc in locs:
+            locs_seen = open('locs_seen.txt', 'r').read().split('\n')
+            if len(locs_seen) == len(locs):
+                f = open('locs_seen.txt','w')
+                f.write('')
+                f.close()
+            if loc not in locs_seen:
+                bot.search_bar(loc)
+                time.sleep(10)
+                bot.follow_from_tilepage(9)
+                with open('locs_seen.txt', 'a') as f:
+                    f.write(loc + '\n')
+    except Exception:
+        print(traceback.format_exc())
+        pass
 
-# bot.followWithUsername('sunset_and_sunrise_photos')
-# bot.unfollowWithUsername('sunset_and_sunrise_photos')
-# following = bot.getUserFollowing('melo.moments', 2000)
-#
-# with open('popular_accounts.txt', 'r') as p:
-#     popular = p.read().split('\n')[:-1]
-#     random.shuffle(popular)
-# for celeb in popular:
-#     try:
-#         users = bot.getUserFollowers(celeb, 20)
-#         users = [user.split('/')[-2] for user in users]
-#         for user in users:
-#             print('\n' + user + '\n')
-#             try:
-#                 # bot.followWithUsername(user)
-#                 # time.sleep(5)
-#                 with open('following.txt', 'a') as f:
-#                     f.write(user + '\n')
-#                 f = open('following.txt', 'r').read().split('\n')[:-1]
-#                 print('\n following: ' + str(len(f)) + '\n')
-#                 unfollow_amount = 1
-#                 if len(f) > 0:
-#                     unfollow = f[:unfollow_amount]
-#                     for un in unfollow:
-#                         try:
-#                             bot.unfollowWithUsername(un)
-#                             time.sleep(np.random.randint(5, 10, 1)[0])
-#                         except Exception:
-#                             print(traceback.format_exc())
-#                             pass
-#                     new_f = '\n'.join(f[unfollow_amount:])
-#                     with open('following.txt', 'w') as f:
-#                         f.write(new_f + '\n')
-#                 time_now = time.time()
-#                 # sleep_for = np.random.randint(250, 350, 1)[0]
-#                 # waited_time = time.time() - time_now
-#                 # print('\n')
-#                 # while waited_time < sleep_for:
-#                 #     time.sleep(1)
-#                 #     waited_time = time.time() - time_now
-#                 #     waitbar(waited_time, sleep_for)
-#             except Exception:
-#                 print(traceback.format_exc())
-#                 pass
-#         print(users)
-#     except Exception:
-#         print(traceback.format_exc())
-#         pass
-
-
-# first_sq = self.browser.find_element_by_xpath('//*[@id="react-root"]/section/main/article/div[1]/div/div/div[1]/div[1]/a')
-# sleep(2)
-# first_sq.click()
-# sleep(5)
