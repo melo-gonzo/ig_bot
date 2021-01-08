@@ -106,8 +106,12 @@ class InstagramBot():
         time.sleep(7)
 
     def add_to_following(self, user):
-        with open(account + '_following.txt', 'a') as f:
-            f.write(user + '\n')
+        follower_list = open(account + '_following.txt', 'r').read().split('\n')[:-1]
+        if user not in follower_list:
+            with open(account + '_following.txt', 'a') as f:
+                f.write(user + '\n')
+        else:
+            print('Already Following: ' + user)
 
     def remove_followers(self, num_to_remove):
         f = open(account + '_following.txt', 'r').read().split('\n')[:-1]
@@ -159,6 +163,9 @@ class InstagramBot():
                     self.do_sleep(sleep_low, sleep_high)
                     print('\n' + 'click cancel button' + '\n')
                     cancel_button.click()
+                    self.do_sleep(sleep_low, sleep_high)
+                    print('\n' + 'click like button' + '\n')
+                    self.browser.find_element_by_xpath("//span[@class='fr66n']").click()
                     self.do_sleep(sleep_low, sleep_high)
                     print('\n' + 'click next button' + '\n')
                     self.browser.find_element_by_link_text('Next').click()
@@ -225,13 +232,13 @@ def waitbar(current, total):
     print(done * '-' + '>' + togo * '.' + per + '%', end='\r')
 
 
-sleep_low = 5
-sleep_high = 10
+sleep_low = 100
+sleep_high = 200
 bot = InstagramBot(username, password)
 bot.signIn()
 time.sleep(5)
-bot.getUserFollowing(username, max_following=1000)
-bot.remove_followers(10)
+# bot.getUserFollowing(username, max_following=1000)
+# bot.remove_followers(10)
 locations = open('locations.txt','r').read().split('\n')[:-1]
 idx = random.sample(range(len(locations)), len(locations))
 locs = [locations[ii] for ii in idx]
