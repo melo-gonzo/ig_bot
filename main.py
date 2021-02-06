@@ -117,7 +117,7 @@ class InstagramBot():
         f = open(account + '_following.txt', 'r').read().split('\n')[:-1]
         print('\n following: ' + str(len(f)) + '\n')
         unfollow_amount = num_to_remove
-        if len(f) > num_to_remove:
+        if len(f) > num_to_remove and len(f) > 1000:
             unfollow = f[:unfollow_amount]
             for un in unfollow:
                 try:
@@ -143,7 +143,7 @@ class InstagramBot():
                 self.do_sleep(sleep_low, sleep_high)
                 username = self.browser.find_element_by_xpath(
                     '/html/body/div[5]/div[2]/div/article/header/div[2]/div[1]/div[1]/span/a').text
-                # follow_button = self.browser.find_element_by_xpath("//button[contains(.,'Follow')]")
+                follow_button = self.browser.find_element_by_xpath("//button[contains(.,'Follow')]")
                 fb_xp = '/html/body/div[5]/div[2]/div/article/header/div[2]/div[1]/div[2]/button'
                 follow_button = self.browser.find_element_by_xpath(fb_xp)
                 print('\n' + 'click follow button' + '\n')
@@ -175,7 +175,7 @@ class InstagramBot():
                     pass
                 print(traceback.format_exc())
                 pass
-        self.remove_followers(int(num_to_follow * 2))
+        #self.remove_followers(int(num_to_follow * 1.4))
 
     def getUserFollowing(self, username, max_following=1000):
         self.browser.get('https://www.instagram.com/' + username)
@@ -232,8 +232,8 @@ def waitbar(current, total):
     print(done * '-' + '>' + togo * '.' + per + '%', end='\r')
 
 
-sleep_low = 100
-sleep_high = 200
+sleep_low = 200
+sleep_high = 400
 bot = InstagramBot(username, password)
 bot.signIn()
 time.sleep(5)
