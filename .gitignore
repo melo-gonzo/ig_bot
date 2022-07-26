@@ -1,0 +1,8 @@
+.idea/
+__pycache__/
+chromedriver_linux64/
+following.txt
+login.py
+popular_accounts.txt
+popular_backup
+scripts/

@@ -7,9 +7,7 @@ session = InstaPy(username=username, password=password)
 # let's go! :>
 with smart_run(session):
     # general settings
-    session.set_dont_include(
-        ['nick_presniakov', 'andre.spams', 'filmbysd', 'dplyusnin', 'slim.shaden', 'corey_wilsom', 'christianschaffer',
-         'bryanaholly', 'samkolder', 'carmellarose', 'smadameshek', 'petermckinnon', 'liltunechi'])
+
     session.set_relationship_bounds(enabled=True,
                                     delimit_by_numbers=False, max_followers=10000, max_following=100000000,
                                     min_followers=35, min_following=35)
@@ -34,6 +32,6 @@ with smart_run(session):
         random.shuffle(['photography', 'blackandwhitephotography', 'naturephotography', 'photographylovers', 'Instaphoto', 'photogram',
          'photographyislife', 'justgoshoot', 'picoftheday', 'photooftheday', 'love', 'nature',
          'sunset', 'sunrise', 'landscape', 'flowers', 'mountains', 'sky', 'lake', 'river', 'ocean',
-         'instalike', 'love', 'instagood', 'fashion', 'beautiful', 'friends', 'summer', 'selfie', 'foodk ',
+         'instalike', 'love', 'instagood', 'fashion', 'beautiful', 'friends', 'summer', 'selfie', 'food',
          'family', 'igers', 'tbt', 'happy']), amount=10)
     session.join_pods(topic='general')
