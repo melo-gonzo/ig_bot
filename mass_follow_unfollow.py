@@ -6,7 +6,6 @@ import random
 session = InstaPy(username=username, password=password)
 # let's go! :>
 with smart_run(session):
-    # general settings
 
     session.set_relationship_bounds(enabled=True,
                                     delimit_by_numbers=False, max_followers=10000, max_following=100000000,
